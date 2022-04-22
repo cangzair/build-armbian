@@ -1,0 +1,95 @@
+#==========================================================================
+# Description: Build Armbian For Amlogic s9xxx tv box
+# Copyright (C) 2021 https://github.com/ophub/amlogic-s9xxx-armbian
+#==========================================================================
+
+name: Use Releases file to build armbian
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      sel_tags_keywords:
+        description: "Release: jammy / focal / bullseye"
+        required: false
+        default: "focal"
+      more_settings:
+        description: "Rebuild: More parameter settings"
+        required: false
+        default: ""
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    if: github.event.repository.owner.id == github.event.sender.id
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Initialization environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+          sudo -E apt-get -qq update
+          sudo -E apt-get -qq install $(curl -fsSL https://raw.githubusercontent.com/ophub/amlogic-s9xxx-armbian/main/compile-kernel/tools/script/ubuntu2004-armbian-depends)
+          sudo -E apt-get -qq autoremove --purge
+          sudo -E apt-get -qq clean
+          sudo timedatectl set-timezone "$TZ"
+          echo "COMPILE_STARTINGTIME=$(date +"%m.%d.%H%M")" >> $GITHUB_ENV
+
+      - name: Rebuild Armbian for amlogic s9xxx
+        id: rebuild
+        if: (!cancelled())
+        run: |
+          armbian_buildpath="build/output/images"
+          [ -d "${armbian_buildpath}" ] || mkdir -p "${armbian_buildpath}"
+          down_repo="https://api.github.com/repos/${GITHUB_REPOSITORY}/releases"
+          down_path="Armbian_Aml_${{ github.event.inputs.sel_tags_keywords }}.*/Armbian_.*-trunk_.*.img.gz"
+          down_filename="$(curl -s "${down_repo}" | grep -oE "${down_path}" | head -n 1)"
+          down_file="https://github.com/${GITHUB_REPOSITORY}/releases/download/${down_filename}"
+          [ -z "${down_file}" ] && echo "Invalid download file." && exit 1
+          wget -q -P "${armbian_buildpath}" "${down_file}" && sync
+          cd "${armbian_buildpath}" && gzip -df *.img.gz && sync
+
+          set_release="_"
+          out_releasename=$(ls -l *-trunk_* 2>/dev/null | awk '{print $9}' | head -n 1)
+          ARR_RELEASE=("jammy" "focal" "bullseye" "buster")
+          i=1
+          for r in ${ARR_RELEASE[*]}; do
+              if [[ "${out_releasename}" == *${r}* ]]; then
+                  set_release="_${r}_"
+                  break
+              fi
+              let i++
+          done
+          echo "ARMBIAN_RELEASE=${set_release}" >> $GITHUB_ENV
+
+          cd ${GITHUB_WORKSPACE}
+          sudo chmod +x rebuild
+          sudo ./rebuild -d ${{ github.event.inputs.more_settings }}
+          cd ./build/output/images && sudo gzip *.img && sync
+          echo "FILEPATH=$PWD" >> $GITHUB_ENV
+          echo "FILE_DATE=$(date +"%m.%d.%H%M")" >> $GITHUB_ENV
+          echo "::set-output name=status::success"
+
+      - name: Upload Armbian image to Release
+        id: release
+        uses: ncipollo/release-action@v1
+        if: steps.rebuild.outputs.status == 'success' && !cancelled()
+        with:
+          tag: Armbian_Aml${{ env.ARMBIAN_RELEASE }}${{ env.FILE_DATE }}
+          artifacts: ${{ env.FILEPATH }}/*
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            This is Armbian image for Amlogic s9xxx tv box
+            * Firmware information
+            Default username: root
+            Default password: 1234
+            Install command: armbian-install
+            Update command: armbian-update
