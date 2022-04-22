@@ -59,4 +59,4 @@ jobs:
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
-            The kernel can be used to compile Armbian and OpenWrt.
+            内核可用于编译 Armbian 和 OpenWrt.
