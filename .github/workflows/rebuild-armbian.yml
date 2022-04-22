@@ -3,7 +3,7 @@
 # Copyright (C) 2021 https://github.com/ophub/amlogic-s9xxx-armbian
 #==========================================================================
 
-name: 重建 Armbian
+name: 二次编译 Armbian
 
 on:
   repository_dispatch:
@@ -84,7 +84,7 @@ jobs:
           done
           echo "ARMBIAN_RELEASE=${set_release}" >> $GITHUB_ENV
 
-      - name: 重建 Armbian
+      - name: 二次 Armbian
         uses: ophub/amlogic-s9xxx-armbian@main
         if: env.ARMBIAN_URL != '' && !cancelled()
         with:
