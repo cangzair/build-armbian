@@ -3,7 +3,7 @@
 # Copyright (C) 2021 https://github.com/ophub/amlogic-s9xxx-armbian
 #==========================================================================
 
-name: Rebuild armbian
+name: 重建 Armbian
 
 on:
   repository_dispatch:
@@ -42,7 +42,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Initialization environment
+      - name: 初始化编译环境
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
@@ -84,7 +84,7 @@ jobs:
           done
           echo "ARMBIAN_RELEASE=${set_release}" >> $GITHUB_ENV
 
-      - name: Rebuild Armbian for Amlogic s9xxx
+      - name: 重建 Armbian
         uses: ophub/amlogic-s9xxx-armbian@main
         if: env.ARMBIAN_URL != '' && !cancelled()
         with:
@@ -94,7 +94,7 @@ jobs:
           armbian_size: ${{ github.event.inputs.armbian_size }}
           armbian_fstype: ${{ github.event.inputs.armbian_fstype }}
 
-      - name: Upload Armbian image to Release
+      - name: 上传 Armbian 镜像
         id: release
         uses: ncipollo/release-action@v1
         if: env.PACKAGED_STATUS == 'success' && !cancelled()
