@@ -3,7 +3,7 @@
 # Copyright (C) 2021 https://github.com/ophub/amlogic-s9xxx-armbian
 #==========================================================================
 
-name: 使用发布的文件 编译Armbian
+name: 使用Releases 编译Armbian
 
 on:
   repository_dispatch:
