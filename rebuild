@@ -57,20 +57,13 @@ armbian_release_file="etc/armbian-release"
 # Add custom armbian firmware information
 ophub_release_file="etc/ophub-release"
 # Kernel files download repository
-kernel_repo="https://github.com/ophub/kernel/tree/main/pub"
-version_branch="stable"
+kernel_repo="https://github.com/cangzair/kernel"
+# version_branch="stable"
 auto_kernel="true"
-build_kernel=("5.15.25" "5.10.100")
+build_kernel=("5.10.112")
 # Set supported SoC
 build_armbian=(
-    "s922x" "s922x-n2" "s922x-reva" "a311d"
-    "s905x3"
-    "s905x2" "s905x2-km3" "s905l3a"
-    "s912" "s912-m8s"
-    "s905d" "s905d-ki"
-    "s905x"
-    "s905w"
-    "s905"
+    "s905d" 
 )
 # Set Armbian firmware size (SKIP_MB >= 4, BOOT_MB >= 256, ROOT_MB >= 2000)
 SKIP_MB="68"
@@ -135,7 +128,7 @@ init_var() {
                 IFS=$oldIFS
                 shift
             else
-                error_msg "Invalid -b parameter [ ${2} ]!"
+                error_msg "-b 参数无效 [ ${2} ]!"
             fi
             ;;
         -k | --kernel)
@@ -146,7 +139,7 @@ init_var() {
                 IFS=$oldIFS
                 shift
             else
-                error_msg "Invalid -k parameter [ ${2} ]!"
+                error_msg "-k 参数无效 [ ${2} ]!"
             fi
             ;;
         -a | --autokernel)
@@ -154,7 +147,7 @@ init_var() {
                 auto_kernel="${2}"
                 shift
             else
-                error_msg "Invalid -a parameter [ ${2} ]!"
+                error_msg "-a 参数无效 [ ${2} ]!"
             fi
             ;;
         -v | --versionbranch)
@@ -162,7 +155,7 @@ init_var() {
                 version_branch="${2}"
                 shift
             else
-                error_msg "Invalid -v parameter [ ${2} ]!"
+                error_msg "-v 参数无效 [ ${2} ]!"
             fi
             ;;
         -s | --size)
@@ -170,7 +163,7 @@ init_var() {
                 ROOT_MB="${2}"
                 shift
             else
-                error_msg "Invalid -s parameter [ ${2} ]!"
+                error_msg "-s 参数无效 [ ${2} ]!"
             fi
             ;;
         -t | --rootfstype)
@@ -178,11 +171,11 @@ init_var() {
                 ROOTFS_TYPE="${2}"
                 shift
             else
-                error_msg "Invalid -t parameter [ ${2} ]!"
+                error_msg "-t 参数无效 [ ${2} ]!"
             fi
             ;;
         *)
-            error_msg "Invalid option [ ${1} ]!"
+            error_msg "无效的选项 [ ${1} ]!"
             ;;
         esac
         shift
@@ -194,14 +187,14 @@ find_armbian() {
 
     # Get armbian release and version
     armbian_rebuild_name=$(ls ${armbian_rebuild_file} 2>/dev/null | head -n 1 | awk -F "/" '{print $NF}')
-    [[ -n "${armbian_rebuild_name}" ]] || error_msg "The armbian original file does not exist: [ ${armbian_rebuild_file} ]"
+    [[ -n "${armbian_rebuild_name}" ]] || error_msg "armbian 原文件不存在: [ ${armbian_rebuild_file} ]"
     # Find armbian version info: such as [ 22.02.0 ]
     armbian_rebuild_version="$(echo ${armbian_rebuild_name} | grep -oE '[2-9][0-9].[0-9]{1,2}.[0-9]{1,2}' | head -n 1)"
     [[ -n "${armbian_rebuild_version}" ]] || {
         armbian_rebuild_version="22.02.02"
-        echo -e "Missing armbian version info!"
+        echo -e "缺少 armbian 版本信息!"
     }
-    echo -e "Armbian rebuild file: [ ${armbian_rebuild_name} ], Version: [ ${armbian_rebuild_version} ]"
+    echo -e "Armbian 重建文件: [ ${armbian_rebuild_name} ], Version: [ ${armbian_rebuild_version} ]"
 }
 
 download_kernel() {
@@ -224,7 +217,7 @@ download_kernel() {
     # Query the latest kernel in a loop
     i=1
     for KERNEL_VAR in ${build_kernel[*]}; do
-        echo -e "(${i}) Auto query the latest kernel version of the same series for [ ${KERNEL_VAR} ]"
+        echo -e "(${i}) 自动查询同系列最新内核版本 [ ${KERNEL_VAR} ]"
         MAIN_LINE_M=$(echo "${KERNEL_VAR}" | cut -d '.' -f1)
         MAIN_LINE_V=$(echo "${KERNEL_VAR}" | cut -d '.' -f2)
         MAIN_LINE_S=$(echo "${KERNEL_VAR}" | cut -d '.' -f3)
@@ -236,7 +229,7 @@ download_kernel() {
         else
             tmp_arr_kernels[${i}]="${KERNEL_VAR}"
         fi
-        echo -e "(${i}) [ ${tmp_arr_kernels[$i]} ] is latest kernel. \n"
+        echo -e "(${i}) [ ${tmp_arr_kernels[$i]} ] 是最新的内核. \n"
 
         let i++
     done
@@ -249,10 +242,10 @@ download_kernel() {
     i=1
     for KERNEL_VAR in ${build_kernel[*]}; do
         if [ ! -d "${kernel_path}/${KERNEL_VAR}" ]; then
-            echo -e "(${i}) [ ${KERNEL_VAR} ] Kernel loading from [ ${kernel_repo}/${KERNEL_VAR} ]"
+            echo -e "(${i}) [ ${KERNEL_VAR} ] 内核加载从 [ ${kernel_repo}/${KERNEL_VAR} ]"
             svn export ${kernel_repo}/${KERNEL_VAR} ${kernel_path}/${KERNEL_VAR} --force
         else
-            echo -e "(${i}) [ ${KERNEL_VAR} ] Kernel is in the local directory."
+            echo -e "(${i}) [ ${KERNEL_VAR} ] 内核在本地目录中."
         fi
 
         let i++
@@ -262,7 +255,7 @@ download_kernel() {
 }
 
 confirm_version() {
-    process_msg " (1/6) Confirm version type."
+    process_msg " (1/6) 确认版本类型."
     cd ${make_path}
 
     # Confirm soc branch
@@ -361,18 +354,18 @@ confirm_version() {
         ANDROID_UBOOT=""
         ;;
     *)
-        error_msg "Have no this soc: [ ${soc} ]"
+        error_msg "没有这个soc: [ ${soc} ]"
         ;;
     esac
 
     # Confirm UUID
     ROOTFS_UUID="$(cat /proc/sys/kernel/random/uuid)"
     [ -z "${ROOTFS_UUID}" ] && ROOTFS_UUID="$(uuidgen)"
-    [ -z "${ROOTFS_UUID}" ] && error_msg "The uuidgen is invalid, cannot continue."
+    [ -z "${ROOTFS_UUID}" ] && error_msg "uuidgen 无效，无法继续."
 }
 
 extract_armbian() {
-    process_msg " (2/6) Extract old armbian files."
+    process_msg " (2/6) 提取旧的 armbian 文件."
     cd ${make_path}
 
     rm -rf ${tmp_dir} 2>/dev/null && sync
@@ -393,10 +386,10 @@ extract_armbian() {
 
     # Find ID in ${os_release_file}: such as [ubuntu/debian]
     release_codeid="$(cat ${os_release_file} | grep -oE "^ID=.*" | cut -d"=" -f2)"
-    [ -z "${release_codeid}" ] && error_msg "The [ ${os_release_file}: ID ] is invalid."
+    [ -z "${release_codeid}" ] && error_msg "The [ ${os_release_file}: ID ] 是无效的."
     # Find VERSION_CODENAME in ${os_release_file}: such as [jammy/focal/bullseye/buster]
     release_codename="$(cat ${os_release_file} | grep -oE "^VERSION_CODENAME=.*" | cut -d"=" -f2)"
-    [ -z "${release_codename}" ] && error_msg "The [ ${os_release_file}: VERSION_CODENAME ] is invalid."
+    [ -z "${release_codename}" ] && error_msg "The [ ${os_release_file}: VERSION_CODENAME ] 是无效的."
 
     # Delete all files of /boot partition and replace it later
     rm -rf boot/* 2>/dev/null
@@ -409,7 +402,7 @@ extract_armbian() {
 }
 
 refactor_files() {
-    process_msg " (3/6) Refactor related files."
+    process_msg " (3/6) 重构相关文件."
     cd ${make_path}
 
     # Create a dual-partition general directory
@@ -439,11 +432,11 @@ refactor_files() {
     build_dtb=$(ls ${kernel_path}/${kernel}/dtb-amlogic-${kernel}-*.tar.gz 2>/dev/null | head -n 1)
     build_modules=$(ls ${kernel_path}/${kernel}/modules-${kernel}-*.tar.gz 2>/dev/null | head -n 1)
     build_header=$(ls ${kernel_path}/${kernel}/header-${kernel}-*.tar.gz 2>/dev/null | head -n 1)
-    [[ -n "${build_boot}" && -n "${build_dtb}" && -n "${build_modules}" && -n "${build_header}" ]] || error_msg "The 4 kernel missing."
+    [[ -n "${build_boot}" && -n "${build_dtb}" && -n "${build_modules}" && -n "${build_header}" ]] || error_msg "4 内核缺失."
 
     # 01 For /boot five files
     tar -xzf ${build_boot} -C ${tag_bootfs} && sync
-    [[ "$(ls ${tag_bootfs}/*-${kernel}-* -l 2>/dev/null | grep "^-" | wc -l)" -ge "4" ]] || error_msg "The /boot files is missing."
+    [[ "$(ls ${tag_bootfs}/*-${kernel}-* -l 2>/dev/null | grep "^-" | wc -l)" -ge "4" ]] || error_msg "/boot 文件丢失."
     (cd ${tag_bootfs} && cp -f uInitrd-* uInitrd && cp -f vmlinuz-* zImage && sync)
     get_textoffset "${tag_bootfs}/zImage"
 
@@ -453,7 +446,7 @@ refactor_files() {
     # 03 For usr/lib/modules/*
     tar -xzf ${build_modules} -C ${tag_rootfs}/usr/lib/modules && sync
     (cd ${tag_rootfs}/usr/lib/modules/${kernel}-*/ && rm -f build source 2>/dev/null && sync)
-    [[ "$(ls ${tag_rootfs}/usr/lib/modules/${kernel}-* -l 2>/dev/null | grep "^d" | wc -l)" -eq "1" ]] || error_msg "Missing kernel."
+    [[ "$(ls ${tag_rootfs}/usr/lib/modules/${kernel}-* -l 2>/dev/null | grep "^d" | wc -l)" -eq "1" ]] || error_msg "缺少内核."
 
     # 04 For header files, usr/local/include
     tar -xzf ${build_header} -C ${tag_rootfs}/usr/local && sync
@@ -475,12 +468,12 @@ refactor_files() {
         cp -f ${UBOOT_OVERLOAD} u-boot.ext
         chmod +x u-boot.ext
     elif [[ "${K510}" -eq "1" ]] && [[ -z "${UBOOT_OVERLOAD}" || ! -f "${UBOOT_OVERLOAD}" ]]; then
-        error_msg "${soc} SoC does not support using ${kernel} kernel, missing u-boot."
+        error_msg "${soc} SoC 不支持使用 ${kernel} 内核，缺少 u-boot."
     fi
 
     # Edit the uEnv.txt
     boot_conf_file="uEnv.txt"
-    [ -f "${boot_conf_file}" ] || error_msg "The [ ${boot_conf_file} ] file does not exist."
+    [ -f "${boot_conf_file}" ] || error_msg "The [ ${boot_conf_file} ] 文件不存在."
     sed -i "s|LABEL=ROOTFS|${uenv_mount_string}|g" ${boot_conf_file}
     sed -i "s|meson.*.dtb|${FDTFILE}|g" ${boot_conf_file}
 
@@ -536,7 +529,7 @@ refactor_files() {
     echo "PACKAGED_DATE='$(date +%Y-%m-%d)'" >>${ophub_release_file} 2>/dev/null
 
     # Edit the etc/fstab
-    [ -f "etc/fstab" ] || error_msg "The etc/fstab File does not exist."
+    [ -f "etc/fstab" ] || error_msg "etc/fstab 文件不存在."
     sed -i '/LABEL=ROOTFS/d' etc/fstab 2>/dev/null
     echo "UUID=${ROOTFS_UUID}  /  ${ROOTFS_TYPE}  ${fstab_mount_string}  0 0" >>etc/fstab
 
@@ -587,7 +580,7 @@ refactor_files() {
 }
 
 make_image() {
-    process_msg " (4/6) Make new armbian image."
+    process_msg " (4/6) 制作新的 armbian 镜像."
     cd ${make_path}
 
     # Make Amlogic s9xxx armbian
@@ -629,7 +622,7 @@ make_image() {
 }
 
 copy_files() {
-    process_msg " (5/6) Copy the Armbian files."
+    process_msg " (5/6) 复制 Armbian 文件."
     cd ${make_path}
 
     build_image_bootfs="${tmp_outpath}/bootfs"
@@ -650,7 +643,7 @@ copy_files() {
 }
 
 clean_tmp() {
-    process_msg " (6/6) Clear temp files."
+    process_msg " (6/6) 清除临时文件."
     cd ${make_path}
 
     umount -f ${tmp_armbian} 2>/dev/null
@@ -681,13 +674,13 @@ loop_rebuild() {
         i=1
         for k in ${build_kernel[*]}; do
             {
-                echo -n "(${j}.${i}) Start building Armbian [ ${b} - ${k} ]. "
+                echo -n "(${j}.${i}) 开始构建 Armbian [ ${b} - ${k} ]. "
                 now_remaining_space=$(df -hT ${PWD} | grep '/dev/' | awk '{print $5}' | sed 's/.$//' | awk -F "." '{print $1}')
                 if [[ "${now_remaining_space}" -le "2" ]]; then
-                    echo "Remaining space is less than 2G, exit this build. \n"
+                    echo "剩余空间小于2G，退出本次构建. \n"
                     break
                 else
-                    echo "Remaining space is ${now_remaining_space}G."
+                    echo "剩余空间为 ${now_remaining_space}G."
                 fi
 
                 # The loop variable assignment
@@ -702,7 +695,7 @@ loop_rebuild() {
                 copy_files
                 clean_tmp
 
-                echo -e "(${j}.${i}) Armbian build successfully. \n"
+                echo -e "(${j}.${i}) armbian 编译成功. \n"
                 let i++
             }
         done
@@ -712,12 +705,12 @@ loop_rebuild() {
 }
 
 # Show welcome message
-echo -e "Welcome to Rebuild Armbian for Amlogic s9xxx tv box!"
-[ $(id -u) = 0 ] || error_msg "please run this script as root: [ sudo ./$0 ]"
+echo -e "欢迎为 Amlogic s9xxx 电视盒构建 Armbian!"
+[ $(id -u) = 0 ] || error_msg "请以 root 身份运行此脚本: [ sudo ./$0 ]"
 # Show server start information
-echo -e "Server CPU configuration information: \n$(cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c) \n"
-echo -e "Server memory usage: \n$(free -h) \n"
-echo -e "Server space usage before starting to compile: \n$(df -hT ${PWD}) \n"
+echo -e "编译服务器 CPU 配置信息: \n$(cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c) \n"
+echo -e "编译服务器 内存 使用情况: \n$(free -h) \n"
+echo -e "编译服务器 空间 使用情况: \n$(df -hT ${PWD}) \n"
 #
 # Initialize variables
 init_var "${@}"
@@ -725,13 +718,13 @@ init_var "${@}"
 find_armbian
 # Download the latest kernel
 [ "${auto_kernel}" == "true" ] && download_kernel
-echo -e "Armbian SoC List: [ $(echo ${build_armbian[*]} | tr "\n" " ") ]"
-echo -e "Kernel List: [ $(echo ${build_kernel[*]} | tr "\n" " ") ]"
-echo -e "ROOTFS Type: [ ${ROOTFS_TYPE} ] \n"
+echo -e "Armbian SoC 列表: [ $(echo ${build_armbian[*]} | tr "\n" " ") ]"
+echo -e "内核 列表: [ $(echo ${build_kernel[*]} | tr "\n" " ") ]"
+echo -e "ROOTFS 类型: [ ${ROOTFS_TYPE} ] \n"
 # Loop to rebuild armbian firmware
 loop_rebuild
 #
 # Show server end information
-echo -e "Server space usage after compilation: \n$(df -hT ${PWD}) \n"
+echo -e "编译后的 服务器 空间使用情况: \n$(df -hT ${PWD}) \n"
 # All process completed
 wait
