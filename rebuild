@@ -61,7 +61,7 @@ kernel_repo="https://github.com/cangzair/kernel"
 # version_branch="stable"
 auto_kernel="true"
 build_kernel=("5.10.112")
-# Set supported SoC
+# 机型 SoC 设置
 build_armbian=(
     "s905d" 
 )
