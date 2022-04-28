@@ -57,8 +57,8 @@ armbian_release_file="etc/armbian-release"
 # Add custom armbian firmware information
 ophub_release_file="etc/ophub-release"
 # Kernel files download repository
-kernel_repo="https://github.com/cangzair/kernel"
-# version_branch="stable"
+kernel_repo="https://github.com/cangzair/kernel/tree/main"
+version_branch="stable"
 auto_kernel="true"
 build_kernel=("5.10.112")
 # 机型 SoC 设置
@@ -204,8 +204,7 @@ download_kernel() {
     if [[ ${kernel_repo} == http* && $(echo ${kernel_repo} | grep "tree/main") != "" ]]; then
         kernel_repo="${kernel_repo//tree\/main/trunk}"
     fi
-    kernel_repo="${kernel_repo}"
-    # kernel_repo="${kernel_repo}/${version_branch}"
+    kernel_repo="${kernel_repo}/${version_branch}"
 
     # 设置空数值
     tmp_arr_kernels=()
