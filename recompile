@@ -5,36 +5,36 @@
 # License version 2. This program is licensed "as is" without any
 # warranty of any kind, whether express or implied.
 #
-# This file is a part of the Armbian Rebuild and kernel Recompile script
+# 该脚本文件 只是编译 Armbian 的内核
 # https://github.com/ophub/amlogic-s9xxx-armbian
 #
-# Description: Run on Ubuntu-20.04-x86_64, Compile the kernel for Amlogic s9xxx tv box
+# 仅支持在 Ubuntu-20.04-x86_64 系统上运行，为 Amlogic s9xxx 电视盒编译内核
 # Copyright (C) 2021- https://github.com/unifreq
 # Copyright (C) 2021- https://github.com/ophub/amlogic-s9xxx-armbian
 #
 # Command: sudo ./recompile -d
-# Command optional parameters please refer to the source code repository
+# 命令可选参数请参考源码仓库
 #
 #======================================= Functions list =======================================
 #
-# error_msg          : Output error message
+# error_msg          : 显示错误信息
 #
-# init_var           : Initialize all variables
-# toolchain_check    : Check and install the cross-compilation toolchain (GCC, Clang, Armbian)
-# query_version      : Query the latest kernel version
+# init_var           : 初始化所有变量
+# toolchain_check    : 检查并安装交叉编译工具链 (GCC, Clang, Armbian)
+# query_version      : 查询最新内核版本
 #
-# get_kernel_source  : Get the kernel source code
-# env_check          : Check the environment for compile kernel
-# compile_kernel     : Compile the kernel
-# generate_uinitrd   : Chroot into Armbian to generate initrd.img and uInitrd
-# packit_kernel      : Package the full set of kernel files
-# clean_tmp          : Clear temporary files
+# get_kernel_source  : 获取内核源代码
+# env_check          : 检查编译内核的环境
+# compile_kernel     : 编译内核
+# generate_uinitrd   : 进入 Chroot Armbian 系统 生成成 initrd.img 和 uInitrd
+# packit_kernel      : 打包全部内核文件
+# clean_tmp          : 清除临时文件
 #
-# loop_recompile     : Loop to compile kernel
+# loop_recompile     : 重复编译内核动作
 #
 #=============================== Set make environment variables ===============================
 #
-# Related file storage path
+# 文件的路径
 make_path="${PWD}"
 compile_path="${make_path}/compile-kernel"
 kernel_path="${compile_path}/kernel"
@@ -48,33 +48,33 @@ chroot_file="${chroot_path}/chroot_armbian.img"
 arch_info="$(arch)"
 toolchain_path="/usr/local/toolchain"
 #
-# Set the default value of the [ -r ] parameter
-# When set to [ -r kernel.org ], Kernel download from kernel.org
+# 设置 [ -r ] 参数的默认值
+# 当设置为 [ -r kernel.org ] 时，内核从官网 kernel.org 下载
 kernel_org_repo="https://cdn.kernel.org/pub/linux/kernel/v5.x/"
-# Set the default for downloading kernel sources from github.com
+# 设置下载 默认内核源 从 github.com 仓库下载
 repo_owner="unifreq"
 repo_branch="main"
 build_kernel=("5.4.188" "5.10.10" "5.15.25")
 auto_kernel="true"
 custom_name=""
 #
-# Cross compile toolchain download mirror, run on ubuntu-20.04
+# 交叉编译工具链下载镜像，仅在 ubuntu-20.04 系统上运行
 dev_repo="https://github.com/ophub/kernel/releases/download/dev"
 #
-# Armbian download from: https://github.com/ophub/amlogic-s9xxx-armbian/releases
+# Armbian 下载地址: https://github.com/ophub/amlogic-s9xxx-armbian/releases
 armbian_rootfs_file="armbian_22.05.0_aml_s922x_focal_5.15.31.tar.xz"
 #
-# GCC download from: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/downloads
+# GCC 下载地址: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/downloads
 gcc_file="gcc-arm-11.2-2022.02-x86_64-aarch64-none-linux-gnu.tar.xz"
 #
-# Clang download from: https://github.com/llvm/llvm-project/releases
+# Clang 下载地址: https://github.com/llvm/llvm-project/releases
 clang_file="clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz"
 #
-# QEMU BINARY
+# QEMU 虚拟机系统
 qemu_binary_arm="qemu-arm-static"
 qemu_binary_arm64="qemu-aarch64-static"
 #
-# Set font color
+# 设置字体颜色
 blue_font_prefix="\033[94m"
 purple_font_prefix="\033[95m"
 green_font_prefix="\033[92m"
@@ -417,13 +417,13 @@ generate_uinitrd() {
     chmod +x ${tag_rootfs}/root/generate_uinitrd.sh 2>/dev/null
 
     # 进入 Armbian系统 生成 /boot/uInitrd-${kernel_outname} 文件
-    echo -e "${INFO} 进入 Chroot Armbian系统..."
+    echo -e "${INFO} 进入 Chroot Armbian 系统..."
     chroot ${tag_rootfs} /bin/bash -c "/root/generate_uinitrd.sh ${kernel_outname}"
-    [[ $? -ne 0 || ! -f "${tag_rootfs}"/boot/uInitrd-${kernel_outname} ]] && error_msg "Create chroot uInitrd-${kernel_outname} file failed."
+    [[ $? -ne 0 || ! -f "${tag_rootfs}"/boot/uInitrd-${kernel_outname} ]] && error_msg "创建 uInitrd-${kernel_outname} 文件失败."
 
     cd ${make_path}
     # 将生成的 uInitrd文件 复制到当前系统
-    echo -e "${INFO} Copy the generated files from [ ${tag_rootfs}/boot ]"
+    echo -e "${INFO} 复制生成的文件 [ ${tag_rootfs}/boot ]"
     cp -f ${tag_rootfs}/boot/*${kernel_outname} ${out_kernel}/boot && sync
 
     # 卸载 Armbian 系统
@@ -440,35 +440,35 @@ packit_kernel() {
     chmod +x *
     tar -czf boot-${kernel_outname}.tar.gz * && sync
     mv -f *.tar.gz ${out_kernel}/${kernel_version} && sync
-    echo -e "${SUCCESS} The [ boot-${kernel_outname}.tar.gz ] 文件已打包."
+    echo -e "${SUCCESS} 这个 [ boot-${kernel_outname}.tar.gz ] 文件已打包."
 
     cd ${out_kernel}/dtb/allwinner
     cp -f ${kernel_path}/${local_kernel_path}/arch/arm64/boot/dts/allwinner/*.dtb . && chmod +x * && sync
     tar -czf dtb-allwinner-${kernel_outname}.tar.gz * && sync
     mv -f *.tar.gz ${out_kernel}/${kernel_version} && sync
-    echo -e "${SUCCESS} The [ dtb-allwinner-${kernel_outname}.tar.gz ] 文件已打包."
+    echo -e "${SUCCESS} 这个 [ dtb-allwinner-${kernel_outname}.tar.gz ] 文件已打包."
 
     cd ${out_kernel}/dtb/amlogic
     cp -f ${kernel_path}/${local_kernel_path}/arch/arm64/boot/dts/amlogic/*.dtb . && chmod +x * && sync
     tar -czf dtb-amlogic-${kernel_outname}.tar.gz * && sync
     mv -f *.tar.gz ${out_kernel}/${kernel_version} && sync
-    echo -e "${SUCCESS} The [ dtb-amlogic-${kernel_outname}.tar.gz ] 文件已打包."
+    echo -e "${SUCCESS} 这个 [ dtb-amlogic-${kernel_outname}.tar.gz ] 文件已打包."
 
     cd ${out_kernel}/dtb/rockchip
     cp -f ${kernel_path}/${local_kernel_path}/arch/arm64/boot/dts/rockchip/*.dtb . && chmod +x * && sync
     tar -czf dtb-rockchip-${kernel_outname}.tar.gz * && sync
     mv -f *.tar.gz ${out_kernel}/${kernel_version} && sync
-    echo -e "${SUCCESS} The [ dtb-rockchip-${kernel_outname}.tar.gz ] 文件已打包."
+    echo -e "${SUCCESS} 这个 [ dtb-rockchip-${kernel_outname}.tar.gz ] 文件已打包."
 
     cd ${out_kernel}/modules/lib/modules
     tar -czf modules-${kernel_outname}.tar.gz * && sync
     mv -f *.tar.gz ${out_kernel}/${kernel_version} && sync
-    echo -e "${SUCCESS} The [ modules-${kernel_outname}.tar.gz ] 文件已打包."
+    echo -e "${SUCCESS} 这个 [ modules-${kernel_outname}.tar.gz ] 文件已打包."
 
     cd ${out_kernel}/header
     tar -czf header-${kernel_outname}.tar.gz * && sync
     mv -f *.tar.gz ${out_kernel}/${kernel_version} && sync
-    echo -e "${SUCCESS} The [ header-${kernel_outname}.tar.gz ] 文件已打包."
+    echo -e "${SUCCESS} 这个 [ header-${kernel_outname}.tar.gz ] 文件已打包."
 
     cd ${out_kernel}
     tar -czf ${kernel_version}.tar.gz ${kernel_version} && sync
