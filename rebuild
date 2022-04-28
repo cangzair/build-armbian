@@ -424,15 +424,15 @@ refactor_files() {
     cp -f ${uboot_path}/overload/* ${tag_bootfs}
 
     # 更换内核
-    build_boot=$(ls ${kernel_path}/${kernel}/boot-${kernel}-*.tar.gz 2>/dev/null | head -n 1)
-    build_dtb=$(ls ${kernel_path}/${kernel}/dtb-amlogic-${kernel}-*.tar.gz 2>/dev/null | head -n 1)
-    build_modules=$(ls ${kernel_path}/${kernel}/modules-${kernel}-*.tar.gz 2>/dev/null | head -n 1)
-    build_header=$(ls ${kernel_path}/${kernel}/header-${kernel}-*.tar.gz 2>/dev/null | head -n 1)
+    build_boot=$(ls ${kernel_path}/${kernel}/boot-${kernel}.tar.gz 2>/dev/null | head -n 1)
+    build_dtb=$(ls ${kernel_path}/${kernel}/dtb-amlogic-${kernel}.tar.gz 2>/dev/null | head -n 1)
+    build_modules=$(ls ${kernel_path}/${kernel}/modules-${kernel}.tar.gz 2>/dev/null | head -n 1)
+    build_header=$(ls ${kernel_path}/${kernel}/header-${kernel}.tar.gz 2>/dev/null | head -n 1)
     [[ -n "${build_boot}" && -n "${build_dtb}" && -n "${build_modules}" && -n "${build_header}" ]] || error_msg "4 内核缺失."
 
     # 01 boot 文件
     tar -xzf ${build_boot} -C ${tag_bootfs} && sync
-    [[ "$(ls ${tag_bootfs}/*-${kernel}-* -l 2>/dev/null | grep "^-" | wc -l)" -ge "4" ]] || error_msg "/boot 文件丢失."
+    [[ "$(ls ${tag_bootfs}/*-${kernel} -l 2>/dev/null | grep "^-" | wc -l)" -ge "4" ]] || error_msg "/boot 文件丢失."
     (cd ${tag_bootfs} && cp -f uInitrd-* uInitrd && cp -f vmlinuz-* zImage && sync)
     get_textoffset "${tag_bootfs}/zImage"
 
