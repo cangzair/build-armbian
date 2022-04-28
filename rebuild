@@ -54,9 +54,9 @@ tmp_aml_image="${tmp_dir}/tmp_aml_image"
 os_release_file="etc/os-release"
 # Set banner's ${BOARD_NAME}: such as [ s905x3 ]
 armbian_release_file="etc/armbian-release"
-# Add custom armbian firmware information
+# 添加自定义armbian固件信息
 ophub_release_file="etc/ophub-release"
-# Kernel files download repository
+# 内核文件下载存储库
 kernel_repo="https://github.com/cangzair/kernel/tree/main"
 version_branch="stable"
 auto_kernel="true"
