@@ -441,8 +441,10 @@ refactor_files() {
 
     # 03 内核模块
     tar -xzf ${build_modules} -C ${tag_rootfs}/usr/lib/modules && sync
-    (cd ${tag_rootfs}/usr/lib/modules/${kernel}-*/ && rm -f build source 2>/dev/null && sync)
-    [[ "$(ls ${tag_rootfs}/usr/lib/modules/${kernel}-* -l 2>/dev/null | grep "^d" | wc -l)" -eq "1" ]] || error_msg "缺少内核."
+    (cd ${tag_rootfs}/usr/lib/modules/${kernel}/ && rm -f build source 2>/dev/null && sync)
+    # (cd ${tag_rootfs}/usr/lib/modules/${kernel}-*/ && rm -f build source 2>/dev/null && sync)
+    [[ "$(ls ${tag_rootfs}/usr/lib/modules/${kernel} -l 2>/dev/null | grep "^d" | wc -l)" -eq "1" ]] || error_msg "缺少内核."
+    # [[ "$(ls ${tag_rootfs}/usr/lib/modules/${kernel}-* -l 2>/dev/null | grep "^d" | wc -l)" -eq "1" ]] || error_msg "缺少内核."
 
     # 04 header 文件
     tar -xzf ${build_header} -C ${tag_rootfs}/usr/local && sync
