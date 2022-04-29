@@ -80,7 +80,7 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/armbian/build.git
 
-      - name: 编译 [ ${{ env.ARMBIAN_BOARD }} ] Armbian
+      - name: 编译 [ ${{ env.ARMBIAN_BOARD }} ]
         id: compile
         run: |
           cd build/
@@ -90,7 +90,7 @@ jobs:
                             CLEAN_LEVEL=make,debs COMPRESS_OUTPUTIMAGE=sha
           echo "::set-output name=status::success"
 
-      - name: 重构指定机型 Armbian 
+      - name: 替换 Armbian 内核
         id: rebuild
         if: steps.compile.outputs.status == 'success' && !cancelled()
         run: |
@@ -101,7 +101,7 @@ jobs:
           echo "FILE_DATE=$(date +"%m.%d.%H%M")" >> $GITHUB_ENV
           echo "::set-output name=status::success"
 
-      - name: 上传发布 Armbian 
+      - name: 发布 Armbian 镜像 
         id: release
         uses: ncipollo/release-action@v1
         if: steps.rebuild.outputs.status == 'success' && !cancelled()
@@ -111,9 +111,7 @@ jobs:
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
-            This is Armbian image for Amlogic s9xxx tv box
-            * Firmware information
-            Default username: root
-            Default password: 1234
-            Install command: armbian-install
-            Update command: armbian-update
+            这是 Amlogic s9xxx 系列的电视盒 Armbian 系统镜像
+            * Armbian 系统信息
+            默认用户名: root  默认登录密码: 1234
+            安装到 eMMC 命令: armbian-install
