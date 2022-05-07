@@ -16,11 +16,11 @@ on:
       armbian_soc:
         description: "Input armbian soc"
         required: false
-        default: "s905x3_s905d"
+        default: "s905d"
       armbian_kernel:
         description: "Input armbian kernel"
         required: false
-        default: "5.15.25_5.10.100"
+        default: "5.15.36_5.10.113_5.4.191"
       armbian_size:
         description: "Input armbian size"
         required: false
