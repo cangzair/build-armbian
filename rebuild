@@ -191,7 +191,7 @@ find_armbian() {
     # Find armbian version info: such as [ 22.02.0 ]
     armbian_rebuild_version="$(echo ${armbian_rebuild_name} | grep -oE '[2-9][0-9].[0-9]{1,2}.[0-9]{1,2}' | head -n 1)"
     [[ -n "${armbian_rebuild_version}" ]] || {
-        armbian_rebuild_version="22.02.02"
+        armbian_rebuild_version="22.05.0"
         echo -e "缺少 armbian 版本信息!"
     }
     echo -e "Armbian 重建文件: [ ${armbian_rebuild_name} ], Version: [ ${armbian_rebuild_version} ]"
