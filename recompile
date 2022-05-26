@@ -527,8 +527,8 @@ loop_recompile() {
 
 # Show welcome message
 echo -e "Welcome to compile kernel! \n"
-[ $(id -u) = 0 ] || error_msg "Please run this script as root: [ sudo ./$0 ]"
-[[ ${arch_info} == "x86_64" ]] || error_msg "Please run this script on ubuntu-20.04"
+[ $(id -u) = 0 ] || error_msg "请以 root 身份运行此脚本: [ sudo ./$0 ]"
+[[ ${arch_info} == "x86_64" ]] || error_msg "此脚仅在 Ubuntu-20.04 系统运行"
 # Show server start information
 echo -e "服务器CPU配置信息: \n$(cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c) \n"
 echo -e "服务器内存使用情况: \n$(free -h) \n"
