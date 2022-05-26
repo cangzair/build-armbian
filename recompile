@@ -537,7 +537,7 @@ echo -e "服务器空间使用情况: \n$(df -hT ${PWD}) \n"
 # Initialize variables and download the kernel source code
 init_var "${@}"
 [[ "${auto_kernel}" == "true" ]] && query_version
-echo -e "内核源码来自: [ ${code_owner} ]"
+echo -e "内核源码来自: [github ${code_owner} ]"
 echo -e "即将编译的内核: [ $(echo ${build_kernel[*]} | tr "\n" " ") ] \n"
 # Check the toolchain and loop to compile the kernel
 toolchain_check
