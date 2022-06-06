@@ -579,7 +579,7 @@ refactor_files() {
 
 make_image() {
     process_msg " (4/6) 制作新的 armbian 镜像."
-    cd ${make_path}
+    cd ${make_path} && chmod -R 755 .
 
     # 构建 Amlogic s9xxx armbian
     build_image_file="${tmp_outpath}/Armbian_${armbian_rebuild_version}_Aml_${soc}_${release_codename}_${kernel}_$(date +"%Y.%m.%d.%H%M").img"
