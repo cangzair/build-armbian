@@ -86,7 +86,7 @@ jobs:
           echo -e CPU：${CPUNAME}
           echo
           echo -e 系统空间      类型   容量  已用  可用 使用率
-          df -hT
+          df -hT ${PWD}
           
       - name: 下载源代码
         id: down
