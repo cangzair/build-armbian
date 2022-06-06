@@ -54,9 +54,9 @@ jobs:
         uses: ncipollo/release-action@v1
         if: steps.compile.outputs.status == 'success' && !cancelled()
         with:
-          tag: Akernel_${{ env.PACKAGED_OUTPUTTAGS }}
+          tag: Armbian_kernel_${{ env.PACKAGED_OUTPUTTAGS }}
           artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
-            内核可用于编译 Armbian 和 OpenWrt.
+            内核用于编译 Armbian 镜像 和 OpenWrt 固件引导.
