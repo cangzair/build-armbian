@@ -75,6 +75,15 @@ jobs:
           fi
           echo "ARMBIAN_BOARD=${set_board}" >> $GITHUB_ENV
 
+
+      - name: 服务器信息
+        id: info
+        run: |
+          cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c > CPU
+          cat /proc/cpuinfo | grep "cpu cores" | uniq >> CPU
+          sed -i 's|[[:space:]]||g; s|^.||' CPU && sed -i 's|CPU||g; s|pucores:||' CPU
+          CPUNAME="$(awk 'NR==1' CPU)" && CPUCORES="$(awk 'NR==2' CPU)"
+
       - name: 下载源代码
         id: down
         run: |
