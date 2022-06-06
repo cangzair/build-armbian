@@ -19,7 +19,7 @@ inputs:
   armbian_kernel:
     description: "Set kernel version."
     required: false
-    default: "5.15.36_5.10.113_5.4.191"
+    default: "5.4.197._5.10.120_5.15.45"
   version_branch:
     description: "Set kernel branch."
     required: false
@@ -40,7 +40,7 @@ inputs:
   kernel_version:
     description: "select kernel version"
     required: false
-    default: "5.15.36_5.10.113_5.4.191"
+    default: "5.4.197._5.10.120_5.15.45"
   kernel_auto:
     description: "Auto use the latest kernel"
     required: false
