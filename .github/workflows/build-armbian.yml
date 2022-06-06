@@ -85,7 +85,7 @@ jobs:
           CPUNAME="$(awk 'NR==1' CPU)" && CPUCORES="$(awk 'NR==2' CPU)"
           echo -e CPU：${CPUNAME}
           echo
-          echo -e 系统空间      类型   容量  已用  可用 使用率
+          echo -e 系统空间概况    类型  容量   已用  可用 用率 挂载点
           df -hT ${PWD}
           
       - name: 下载源代码
