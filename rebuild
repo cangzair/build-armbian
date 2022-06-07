@@ -545,11 +545,10 @@ refactor_files() {
     armbian_firstrun="usr/lib/armbian/armbian-firstrun"
     sed -i '/armbian-release/i\[ -f "/usr/sbin/armbian-fix" ] && . /usr/sbin/armbian-fix' ${armbian_firstrun} 2>/dev/null
     
-    # DIY信息
+    # 编译 Debian 镜像 DIY信息
     sed -i "s/armbian/N1/g" /etc/hostname
     sed -i "s/s905d/S905D/g" /etc/armbian-release
-    
-    # 设置静态IP
+    sed -i "s/deb.debian.org/mirrors.ustc.edu.cn/g" /etc/apt/sources.list
     sed -i "s/dhcp/static/g" /etc/network/interfaces
     sed -i '3a allow-hotplug eth0' /etc/network/interfaces
     sed -i '5a address 192.168.123.99' /etc/network/interfaces
