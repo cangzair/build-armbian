@@ -83,10 +83,8 @@ jobs:
           cat /proc/cpuinfo | grep "cpu cores" | uniq >> CPU
           sed -i 's|[[:space:]]||g; s|^.||' CPU && sed -i 's|CPU||g; s|pucores:||' CPU
           CPUNAME="$(awk 'NR==1' CPU)" && CPUCORES="$(awk 'NR==2' CPU)"
-          echo
           echo -e CPU：${CPUNAME}
           echo
-          echo -e 系统空间概况        类型  容量   已用  可用 用率 挂载点
           df -hT ${PWD}
           
       - name: 下载源代码
