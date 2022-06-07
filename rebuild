@@ -532,7 +532,7 @@ refactor_files() {
     echo "UUID=${ROOTFS_UUID}  /  ${ROOTFS_TYPE}  ${fstab_mount_string}  0 0" >>etc/fstab
 
     # 设置 banner 名称
-    sed -i "s|BOARD_NAME=.*|BOARD_NAME=\"Aml ${soc}\"|g" ${armbian_release_file} 2>/dev/null
+    sed -i "s|BOARD_NAME=.*|BOARD_NAME=\"Amlogic ${soc}\"|g" ${armbian_release_file} 2>/dev/null
 
     # 使.bashrc生效，默认shell设置文件: /etc/default/useradd
     echo '[[ "${SHELL}" == *bash && -f "${HOME}/.bashrc" ]] && . ${HOME}/.bashrc' >>etc/profile
@@ -544,7 +544,18 @@ refactor_files() {
     # 添加需要在 初始启动时 执行的任务
     armbian_firstrun="usr/lib/armbian/armbian-firstrun"
     sed -i '/armbian-release/i\[ -f "/usr/sbin/armbian-fix" ] && . /usr/sbin/armbian-fix' ${armbian_firstrun} 2>/dev/null
-
+    
+    # DIY信息
+    sed -i "s/armbian/N1/g" /etc/hostname
+    sed -i "s/s905d/S905D/g" /etc/armbian-release
+    
+    # 设置静态IP
+    sed -i "s/dhcp/static/g" /etc/network/interfaces
+    sed -i '3a allow-hotplug eth0' /etc/network/interfaces
+    sed -i '5a address 192.168.123.99' /etc/network/interfaces
+    sed -i '6a netmask 255.255.255.0' /etc/network/interfaces
+    sed -i '7a gateway 192.168.123.1' /etc/network/interfaces
+    
     # 获取随机网卡 mac地址 
     mac_hexchars="0123456789ABCDEF"
     mac_end=$(for i in {1..6}; do echo -n ${mac_hexchars:$((${RANDOM} % 16)):1}; done | sed -e 's/\(..\)/:\1/g')
@@ -572,6 +583,7 @@ refactor_files() {
         sed -e "s/macaddr=.*/macaddr=${random_macaddr}:05/" "brcmfmac43455-sdio.txt" >"brcmfmac43455-sdio.amlogic,sm1.txt"
         # new ugoos x3 is brm43456
         sed -e "s/macaddr=.*/macaddr=${random_macaddr}:06/" "brcmfmac43456-sdio.txt" >"brcmfmac43456-sdio.amlogic,sm1.txt"
+        
     )
 
     sync
