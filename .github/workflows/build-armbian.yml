@@ -124,7 +124,8 @@ jobs:
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
-            这是 Amlogic s9xxx 系列的电视盒 Armbian 系统镜像
+            这是 Amlogic S9xxx 系列的电视盒的 Armbian 系统镜像
             * Armbian 系统信息
+            默认连接IP：192.168.123.99
             默认用户名: root  默认登录密码: 1234
             安装到 eMMC 命令: armbian-install
