@@ -557,7 +557,7 @@ refactor_files() {
     
     # 修改系统源为中科大
     sources="etc/apt/sources.list"
-    sed -i "s|deb.debian.org|mirrors.ustc.edu.cn\"g" ${sources.list_file} 2>/dev/null
+    sed -i "s|deb.debian.org|mirrors.ustc.edu.cn\"g" ${sources} 2>/dev/null
     
     # 获取随机网卡 mac地址 
     mac_hexchars="0123456789ABCDEF"
