@@ -533,6 +533,8 @@ refactor_files() {
 
     # 设置 banner 名称
     sed -i "s|BOARD_NAME=.*|BOARD_NAME=\"Amlogic ${soc}\"|g" ${armbian_release_file} 2>/dev/null
+    sed -i "s|BOARD_NAME=\"Amlogic ${soc}\|BOARD_NAME=\"Amlogic S905D\"|g" ${armbian_release_file} 2>/dev/null
+    sed -i "s|VERSION=22.08.0-trunk|VERSION=22.08.0\"|g" ${armbian_release_file} 2>/dev/null
 
     # 使.bashrc生效，默认shell设置文件: /etc/default/useradd
     echo '[[ "${SHELL}" == *bash && -f "${HOME}/.bashrc" ]] && . ${HOME}/.bashrc' >>etc/profile
