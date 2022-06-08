@@ -16,7 +16,7 @@ on:
       set_release:
         description: "Release: jammy / focal / bullseye"
         required: false
-        default: "bullseye"
+        default: "buster"
       set_board:
         description: "Board: lepotato / odroidn2"
         required: false
