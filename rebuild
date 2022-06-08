@@ -533,7 +533,6 @@ refactor_files() {
 
     # 设置 banner 名称
     sed -i "s|BOARD_NAME=.*|BOARD_NAME=\"Amlogic ${soc}\"|g" ${armbian_release_file} 2>/dev/null
-    sed -i "s|BOARD_NAME=\"Amlogic ${soc}\|BOARD_NAME=\"Amlogic S905D\"|g" ${armbian_release_file} 2>/dev/null
     sed -i "s|VERSION=22.08.0-trunk|VERSION=22.08.0\"|g" ${armbian_release_file} 2>/dev/null
 
     # 使.bashrc生效，默认shell设置文件: /etc/default/useradd
@@ -548,8 +547,8 @@ refactor_files() {
     sed -i '/armbian-release/i\[ -f "/usr/sbin/armbian-fix" ] && . /usr/sbin/armbian-fix' ${armbian_firstrun} 2>/dev/null
     
     # 编译 Debian 镜像 DIY信息
-    sed -i "s|armbian|N1\"g" ${hostname_file} 2>/dev/null
-    sed -i "s|dhcp|static\"g" ${interfaces_file} 2>/dev/null
+    sed -i 's/armbian/N1/g' ${hostname_file} 2>/dev/null
+    sed -i 's/dhcp/static/g' ${interfaces_file} 2>/dev/null
     sed -i '3a allow-hotplug eth0' ${interfaces_file} 2>/dev/null
     sed -i '5a address 192.168.123.99' ${interfaces_file} 2>/dev/null
     sed -i '6a netmask 255.255.255.0' ${interfaces_file} 2>/dev/null
@@ -557,7 +556,7 @@ refactor_files() {
     
     # 修改系统源为中科大
     sources="etc/apt/sources.list"
-    sed -i "s|deb.debian.org|mirrors.ustc.edu.cn\"g" ${sources} 2>/dev/null
+    sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' ${sources} 2>/dev/null
     
     # 获取随机网卡 mac地址 
     mac_hexchars="0123456789ABCDEF"
