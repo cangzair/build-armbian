@@ -79,15 +79,15 @@ jobs:
       - name: 服务器信息
         id: info
         run: |
-          echo -e "欢迎为 Amlogic s9xxx 电视盒构建 Armbian!"
           cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c > CPU
           cat /proc/cpuinfo | grep "cpu cores" | uniq >> CPU
           sed -i 's|[[:space:]]||g; s|^.||' CPU && sed -i 's|CPU||g; s|pucores:||' CPU
           CPUNAME="$(awk 'NR==1' CPU)" && CPUCORES="$(awk 'NR==2' CPU)"
           echo
+          echo -e "欢迎使用 Amlogic s9xxx 电视盒构建 Armbian "
           echo -e "编译服务器 CPU 配置信息: CPU：${CPUNAME}
-          echo -e "编译服务器 内存 使用情况: \n$(free -h) \n"
           echo -e "编译服务器 空间 使用情况: \n$(df -hT ${PWD}) \n"
+          echo -e "编译服务器 内存 使用情况: \n$(free -h) \n"
           echo
           
       - name: 下载源代码
