@@ -547,12 +547,14 @@ refactor_files() {
     sed -i '/armbian-release/i\[ -f "/usr/sbin/armbian-fix" ] && . /usr/sbin/armbian-fix' ${armbian_firstrun} 2>/dev/null
     
     # 编译 Debian 镜像 DIY信息
-    sed -i 's/armbian/N1/g' ${hostname_file} 2>/dev/null
-    sed -i 's/dhcp/static/g' ${interfaces_file} 2>/dev/null
-    sed -i '3a allow-hotplug eth0' ${interfaces_file} 2>/dev/null
-    sed -i '5a address 192.168.123.99' ${interfaces_file} 2>/dev/null
-    sed -i '6a netmask 255.255.255.0' ${interfaces_file} 2>/dev/null
-    sed -i '7a gateway 192.168.123.1' ${interfaces_file} 2>/dev/null
+    hostname="etc/hostname"
+    sed -i 's/armbian/N1/g' ${hostname} 2>/dev/null
+    interfaces=sources="etc/network/interfaces"
+    sed -i 's/dhcp/static/g' ${interfaces} 2>/dev/null
+    sed -i '3a allow-hotplug eth0' ${interfaces} 2>/dev/null
+    sed -i '5a address 192.168.123.99' ${interfaces} 2>/dev/null
+    sed -i '6a netmask 255.255.255.0' ${interfaces} 2>/dev/null
+    sed -i '7a gateway 192.168.123.1' ${interfaces} 2>/dev/null
     
     # 修改系统源为中科大
     sources="etc/apt/sources.list"
