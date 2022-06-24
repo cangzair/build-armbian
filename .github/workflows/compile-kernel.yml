@@ -29,7 +29,6 @@ jobs:
       - name: 初始化编译环境
         env:
           DEBIAN_FRONTEND: noninteractive
-          SERVERCHAN_SCKEY: true
         run: |
           sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
           sudo -E apt-get -qq update
@@ -38,16 +37,6 @@ jobs:
           sudo -E apt-get -qq clean
           sudo timedatectl set-timezone "$TZ"
           echo "COMPILE_STARTINGTIME=$(date +"%m.%d.%H%M")" >> $GITHUB_ENV
-      
-      - name: 电报通
-        run: |      
-        cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c > CPU
-        cat /proc/cpuinfo | grep "cpu cores" | uniq >> CPU
-        sed -i 's|[[:space:]]||g; s|^.||' CPU && sed -i 's|CPU||g; s|pucores:||' CPU
-        CPUNAME="$(awk 'NR==1' CPU)" && CPUCORES="$(awk 'NR==2' CPU)"
-        if [[ "${SERVERCHAN_SCKEY}" == "true" ]]; then
-        curl -k --data chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" --data "text=🔔 您正在使用【${CPUNAME} CPU】【${CPUCORES}核心】【${CODE}】源码 编译固件中,请耐心等待...... ⏳" "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage"  
-
       - name: 编译Armbian内核
         id: compile
         run: |
@@ -59,7 +48,6 @@ jobs:
           echo "PACKAGED_OUTPUTPATH=${output_dirname}" >> $GITHUB_ENV
           echo "PACKAGED_OUTPUTDATE=$(date +"%m.%d.%H%M")" >> $GITHUB_ENV
           echo "::set-output name=status::success"
-
       - name: 上传发布内核
         uses: ncipollo/release-action@v1
         if: steps.compile.outputs.status == 'success' && !cancelled()
