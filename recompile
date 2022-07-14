@@ -54,7 +54,7 @@ kernel_org_repo="https://cdn.kernel.org/pub/linux/kernel/v5.x/"
 # 设置下载 默认内核源 从 github.com 仓库下载
 repo_owner="unifreq"
 repo_branch="main"
-build_kernel=("4.19.252" "5.4.205" "5.10.130" "5.15.54" "5.18.11")
+build_kernel=("5.4.205" "5.10.130" "5.15.54" "5.18.11")
 auto_kernel="true"
 custom_name=""
 #
