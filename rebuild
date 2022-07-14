@@ -60,7 +60,7 @@ ophub_release_file="etc/ophub-release"
 kernel_repo="https://github.com/cangzair/kernel/tree/main"
 version_branch="stable"
 auto_kernel="true"
-build_kernel=("5.4.197" "5.10.120" "5.15.45")
+build_kernel=("4.19.252" "5.4.205" "5.10.130" "5.15.54" "5.18.11")
 # 机型 SoC 设置
 build_armbian=(
     "s905d" 
